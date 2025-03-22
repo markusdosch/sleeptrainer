@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Minimalist Clock</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 1s ease;
+        }
+        
+        .clock-container {
+            text-align: center;
+            width: 90%;
+            max-width: 800px;
+        }
+        
+        .time {
+            font-size: 18vw;
+            font-weight: 700;
+            color: white;
+            text-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Media queries for responsiveness */
+        @media (min-width: 768px) {
+            .time {
+                font-size: 16vw;
+            }
+        }
+        
+        @media (min-width: 1024px) {
+            .time {
+                font-size: 14vw;
+            }
+        }
+        
+        /* iPad specific */
+        @media only screen 
+        and (min-device-width: 768px) 
+        and (max-device-width: 1024px) {
+            .time {
+                font-size: 20vw;
+            }
+        }
+        
+        /* iPhone specific */
+        @media only screen 
+        and (min-device-width: 320px) 
+        and (max-device-width: 480px) {
+            .time {
+                font-size: 24vw;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="clock-container">
+        <div class="time" id="clock">00:00</div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            function updateClock() {
+                const now = new Date();
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                
+                // Update the clock display
+                document.getElementById('clock').textContent = `${hours}:${minutes}`;
+                
+                // Set background color based on time
+                updateBackgroundColor(now);
+            }
+            
+            function updateBackgroundColor(date) {
+                const hours = date.getHours();
+                const minutes = date.getMinutes();
+                const timeInMinutes = hours * 60 + minutes;
+                
+                // Convert time ranges to minutes for easier comparison
+                const evening_start = 19 * 60;  // 19:00
+                const night_end = 5 * 60 + 45;  // 05:45
+                const morning_transition_end = 6 * 60;  // 06:00
+                
+                let backgroundColor;
+                
+                // Red from 19:00 to 05:45
+                if (timeInMinutes >= evening_start || timeInMinutes < night_end) {
+                    backgroundColor = '#FF3B30';  // Apple red
+                }
+                // Yellow from 05:45 to 06:00
+                else if (timeInMinutes >= night_end && timeInMinutes < morning_transition_end) {
+                    backgroundColor = '#FFCC00';  // Warm yellow
+                }
+                // Green the rest of the time (06:00 to 19:00)
+                else {
+                    backgroundColor = '#34C759';  // Apple green
+                }
+                
+                document.body.style.backgroundColor = backgroundColor;
+            }
+            
+            // Update clock immediately and then every second
+            updateClock();
+            setInterval(updateClock, 1000);
+            
+            // Prevent default behavior for touch events to avoid iOS safari
+            // bouncing effect and unintended zooming
+            document.addEventListener('touchmove', function(event) {
+                event.preventDefault();
+            }, { passive: false });
+        });
+    </script>
+</body>
+</html>
