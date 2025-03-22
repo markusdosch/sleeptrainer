@@ -1,5 +1,5 @@
 {
     "name": "Sleeptrainer",
     "scope": "/",
-    "display": "standalone"
+    "display": "fullscreen"
 }
