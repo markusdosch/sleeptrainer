@@ -68,7 +68,7 @@
 </head>
 <body>
     <div class="clock-container">
-        <div class="time" id="clock">00:00</div>
+        <div class="time" id="clock">XX:XX</div>
     </div>
 
     <script>
@@ -92,16 +92,16 @@
                 
                 // Convert time ranges to minutes for easier comparison
                 const evening_start = 19 * 60;  // 19:00
-                const night_end = 5 * 60 + 45;  // 05:45
+                const night_end = 5 * 60 + 30;  // 05:30
                 const morning_transition_end = 6 * 60;  // 06:00
                 
                 let backgroundColor;
                 
-                // Red from 19:00 to 05:45
+                // Red from 19:00 to 05:30
                 if (timeInMinutes >= evening_start || timeInMinutes < night_end) {
                     backgroundColor = '#FF3B30';  // Apple red
                 }
-                // Yellow from 05:45 to 06:00
+                // Yellow from 05:30 to 06:00
                 else if (timeInMinutes >= night_end && timeInMinutes < morning_transition_end) {
                     backgroundColor = '#FFCC00';  // Warm yellow
                 }
