@@ -65,14 +65,73 @@
             }
         }
     </style>
+    <style>
+        .settings-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+        }
+
+        dialog {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            background-color: white;
+            border: none;
+        }
+
+        dialog::backdrop {
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        dialog h2 {
+            margin-top: 0;
+            color: #333;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #666;
+        }
+        
+        /* via https://stackoverflow.com/a/45890842 */
+button, input[type="submit"], input[type="reset"] {
+	background: none;
+	color: inherit;
+	border: none;
+	padding: 0;
+	font: inherit;
+	cursor: pointer;
+	outline: inherit;
+}
+    </style>
 </head>
 <body>
     <div class="clock-container">
         <div class="time" id="clock">XX:XX</div>
     </div>
+    
+    <button class="settings-btn" aria-label="Open Settings">⚙️</button>
+    
+    <dialog id="settingsDialog">
+        <button class="close-btn" aria-label="Close">&times;</button>
+        <h2>Settings</h2>
+        
+    </dialog>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function() {
             function updateClock() {
                 const now = new Date();
                 const hours = String(now.getHours()).padStart(2, '0');
@@ -122,6 +181,29 @@
             document.addEventListener('touchmove', function(event) {
                 event.preventDefault();
             }, { passive: false });
+        });
+    </script>
+    <script>
+        // Get DOM elements
+        const settingsBtn = document.querySelector('.settings-btn');
+        const settingsDialog = document.getElementById('settingsDialog');
+        const closeBtn = settingsDialog.querySelector('.close-btn');
+
+        // Open dialog when settings button is clicked
+        settingsBtn.addEventListener('click', () => {
+            settingsDialog.showModal();
+        });
+
+        // Close dialog when close button is clicked
+        closeBtn.addEventListener('click', () => {
+            settingsDialog.close();
+        });
+
+        // Close dialog when clicking outside of it
+        settingsDialog.addEventListener('click', (event) => {
+            if (event.target === settingsDialog) {
+                settingsDialog.close();
+            }
         });
     </script>
 </body>
