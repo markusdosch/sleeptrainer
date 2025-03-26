@@ -131,8 +131,6 @@ button, input[type="submit"], input[type="reset"] {
     </dialog>
 
     <script>
-    const timeParams = parseTimeParameters();
-    
 document.addEventListener('DOMContentLoaded', function() {
             function updateClock() {
                 const now = new Date();
@@ -151,6 +149,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const minutes = date.getMinutes();
                 const timeInMinutes = hours * 60 + minutes;
                 
+                const timeParams = parseTimeParameters();
                 let backgroundColor;
                 
                 // Red from 19:00 to 05:30
