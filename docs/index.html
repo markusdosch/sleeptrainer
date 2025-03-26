@@ -131,6 +131,8 @@ button, input[type="submit"], input[type="reset"] {
     </dialog>
 
     <script>
+    const timeParams = parseTimeParameters();
+    
 document.addEventListener('DOMContentLoaded', function() {
             function updateClock() {
                 const now = new Date();
@@ -149,19 +151,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 const minutes = date.getMinutes();
                 const timeInMinutes = hours * 60 + minutes;
                 
-                // Convert time ranges to minutes for easier comparison
-                const evening_start = 19 * 60;  // 19:00
-                const night_end = 5 * 60 + 30;  // 05:30
-                const morning_transition_end = 6 * 60;  // 06:00
-                
                 let backgroundColor;
                 
                 // Red from 19:00 to 05:30
-                if (timeInMinutes >= evening_start || timeInMinutes < night_end) {
+                if (timeInMinutes >= timeParams.eveningStart || timeInMinutes < timeParams.morningTransitionStart) {
                     backgroundColor = '#FF3B30';  // Apple red
                 }
                 // Yellow from 05:30 to 06:00
-                else if (timeInMinutes >= night_end && timeInMinutes < morning_transition_end) {
+                else if (timeInMinutes >= timeParams.morningTransitionStart && timeInMinutes < timeParams.morningTransitionEnd) {
                     backgroundColor = '#FFCC00';  // Warm yellow
                 }
                 // Green the rest of the time (06:00 to 19:00)
@@ -182,8 +179,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 event.preventDefault();
             }, { passive: false });
         });
-    </script>
-    <script>
+    
         // Get DOM elements
         const settingsBtn = document.querySelector('.settings-btn');
         const settingsDialog = document.getElementById('settingsDialog');
@@ -205,6 +201,54 @@ document.addEventListener('DOMContentLoaded', function() {
                 settingsDialog.close();
             }
         });
+        
+        function parseTimeParameters() {
+    // Default values
+    const defaults = {
+        evening_start: '19:00',
+        morning_transition_start: '05:30',
+        morning_transition_end: '06:00'
+    };
+
+    // Create URLSearchParams object
+    const urlParams = new URLSearchParams(window.location.search);
+
+    // Function to convert time string to minutes since midnight
+    function timeToMinutes(timeStr) {
+        // Validate time format (hh:mm)
+        const timeRegex = /^(\d{2}):(\d{2})$/;
+        const match = timeStr.match(timeRegex);
+
+        if (!match) {
+            throw new Error(`Invalid time format: ${timeStr}. Use hh:mm format.`);
+        }
+
+        const hours = parseInt(match[1], 10);
+        const minutes = parseInt(match[2], 10);
+
+        // Validate hours and minutes
+        if (hours < 0 || hours > 23 || minutes < 0 || minutes > 59) {
+            throw new Error(`Invalid time values in: ${timeStr}`);
+        }
+
+        return hours * 60 + minutes;
+    }
+
+    // Parse parameters with defaults
+    const parsedParams = {
+        eveningStart: timeToMinutes(
+            urlParams.get('evening_start') || defaults.evening_start
+        ),
+        morningTransitionStart: timeToMinutes(
+            urlParams.get('morning_transition_start') || defaults.morning_transition_start
+        ),
+        morningTransitionEnd: timeToMinutes(
+            urlParams.get('morning_transition_end') || defaults.morning_transition_end
+        )
+    };
+
+    return parsedParams;
+}
     </script>
 </body>
 </html>
