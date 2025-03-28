@@ -6,10 +6,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
-    <link
-      rel="manifest"
-      href="https://markusdosch.github.io/sleeptrainer/manifest.json"
-    />
+    <link rel="manifest" href="manifest.json" />
     <title>Sleeptrainer</title>
     <style>
       * {
@@ -28,47 +25,13 @@
         transition: background-color 1s ease;
       }
 
-      .clock-container {
-        text-align: center;
-        width: 90%;
-        max-width: 800px;
-      }
-
       .time {
-        font-size: 18vw;
+        font-size: 16vw;
         font-weight: 700;
         color: white;
         text-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       }
 
-      /* Media queries for responsiveness */
-      @media (min-width: 768px) {
-        .time {
-          font-size: 16vw;
-        }
-      }
-
-      @media (min-width: 1024px) {
-        .time {
-          font-size: 14vw;
-        }
-      }
-
-      /* iPad specific */
-      @media only screen and (min-device-width: 768px) and (max-device-width: 1024px) {
-        .time {
-          font-size: 20vw;
-        }
-      }
-
-      /* iPhone specific */
-      @media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
-        .time {
-          font-size: 24vw;
-        }
-      }
-    </style>
-    <style>
       .settings-btn {
         position: fixed;
         top: 20px;
@@ -120,8 +83,7 @@
         cursor: pointer;
         outline: inherit;
       }
-    </style>
-    <style>
+
       .time-input-group {
         display: flex;
         flex-direction: column;
@@ -138,9 +100,7 @@
     </style>
   </head>
   <body>
-    <div class="clock-container">
-      <div class="time" id="clock">XX:XX</div>
-    </div>
+    <div class="time" id="clock">XX:XX</div>
 
     <button class="settings-btn" aria-label="Open Settings">⚙️</button>
 
