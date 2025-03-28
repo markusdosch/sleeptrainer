@@ -26,10 +26,37 @@
       }
 
       .time {
-        font-size: 16vw;
+        font-size: 18vw;
         font-weight: 700;
         color: white;
         text-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Media queries for responsiveness */
+      @media (min-width: 768px) {
+        .time {
+          font-size: 16vw;
+        }
+      }
+
+      @media (min-width: 1024px) {
+        .time {
+          font-size: 14vw;
+        }
+      }
+
+      /* iPad specific */
+      @media only screen and (min-device-width: 768px) and (max-device-width: 1024px) {
+        .time {
+          font-size: 20vw;
+        }
+      }
+
+      /* iPhone specific */
+      @media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
+        .time {
+          font-size: 24vw;
+        }
       }
 
       .settings-btn {
