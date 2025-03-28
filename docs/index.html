@@ -110,25 +110,17 @@
       <div>
         <div class="time-input-group">
           <label for="evening-start">Evening Start Time</label>
-          <input type="time" id="evening-start" name="evening_start" />
+          <input type="time" id="evening-start" />
         </div>
 
         <div class="time-input-group">
           <label for="morning-transition-start">Morning Transition Start</label>
-          <input
-            type="time"
-            id="morning-transition-start"
-            name="morning_transition_start"
-          />
+          <input type="time" id="morning-transition-start" />
         </div>
 
         <div class="time-input-group">
           <label for="morning-transition-end">Morning Transition End</label>
-          <input
-            type="time"
-            id="morning-transition-end"
-            name="morning_transition_end"
-          />
+          <input type="time" id="morning-transition-end" />
         </div>
       </div>
     </dialog>
@@ -136,168 +128,165 @@
     <script>
       // Default times if not specified in URL
       const DEFAULTS = {
-        evening_start: "19:00",
-        morning_transition_start: "05:30",
-        morning_transition_end: "06:00",
+        eveningStart: "19:00",
+        morningTransitionStart: "05:30",
+        morningTransitionEnd: "06:00",
       };
-
-      const inputs = {
-        evening_start: document.getElementById("evening-start"),
-        morning_transition_start: document.getElementById(
-          "morning-transition-start"
-        ),
-        morning_transition_end: document.getElementById(
-          "morning-transition-end"
-        ),
-      };
+      const TIME_REGEX = /^(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9])$/;
 
       document.addEventListener("DOMContentLoaded", function () {
-        initializeInputs();
+        initializeSettingsDialog();
 
-        function updateClock() {
-          const now = new Date();
-          const hours = String(now.getHours()).padStart(2, "0");
-          const minutes = String(now.getMinutes()).padStart(2, "0");
-
-          // Update the clock display
-          document.getElementById("clock").textContent = `${hours}:${minutes}`;
-
-          // Set background color based on time
-          updateBackgroundColor(now);
-        }
-
-        function updateBackgroundColor(date) {
-          const hours = date.getHours();
-          const minutes = date.getMinutes();
-          const timeInMinutes = hours * 60 + minutes;
-
-          const timeParams = parseTimeParameters();
-          let backgroundColor;
-
-          // Red from 19:00 to 05:30
-          if (
-            timeInMinutes >= timeParams.eveningStart ||
-            timeInMinutes < timeParams.morningTransitionStart
-          ) {
-            backgroundColor = "#FF3B30"; // Apple red
-          }
-          // Yellow from 05:30 to 06:00
-          else if (
-            timeInMinutes >= timeParams.morningTransitionStart &&
-            timeInMinutes < timeParams.morningTransitionEnd
-          ) {
-            backgroundColor = "#FFCC00"; // Warm yellow
-          }
-          // Green the rest of the time (06:00 to 19:00)
-          else {
-            backgroundColor = "#34C759"; // Apple green
-          }
-
-          document.body.style.backgroundColor = backgroundColor;
-        }
-
-        // Update clock immediately and then every second
         updateClock();
         setInterval(updateClock, 1000);
-
-        // Prevent default behavior for touch events to avoid iOS safari
-        // bouncing effect and unintended zooming
-        document.addEventListener(
-          "touchmove",
-          function (event) {
-            event.preventDefault();
-          },
-          { passive: false }
-        );
       });
 
-      // Get DOM elements
-      const settingsBtn = document.querySelector(".settings-btn");
-      const settingsDialog = document.getElementById("settingsDialog");
-      const closeBtn = settingsDialog.querySelector(".close-btn");
+      // Prevent default behavior for touch events to avoid iOS safari
+      // bouncing effect and unintended zooming
+      document.addEventListener(
+        "touchmove",
+        function (event) {
+          event.preventDefault();
+        },
+        { passive: false }
+      );
 
-      // Open dialog when settings button is clicked
-      settingsBtn.addEventListener("click", () => {
-        settingsDialog.showModal();
-      });
+      function initializeSettingsDialog() {
+        initializeInputs();
 
-      // Close dialog when close button is clicked
-      closeBtn.addEventListener("click", () => {
-        settingsDialog.close();
-      });
+        const settingsDialog = document.getElementById("settingsDialog");
+        const closeBtn = settingsDialog.querySelector(".close-btn");
 
-      // Close dialog when clicking outside of it
-      settingsDialog.addEventListener("click", (event) => {
-        if (event.target === settingsDialog) {
+        // Open dialog when settings button is clicked
+        document
+          .querySelector(".settings-btn")
+          .addEventListener("click", () => {
+            settingsDialog.showModal();
+          });
+
+        // Close dialog when close button is clicked
+        closeBtn.addEventListener("click", () => {
           settingsDialog.close();
-        }
-      });
+        });
 
-      function parseTimeParameters() {
-        // Create URLSearchParams object
-        const urlParams = new URLSearchParams(window.location.search);
-
-        // Function to convert time string to minutes since midnight
-        function timeToMinutes(timeStr) {
-          // Validate time format (hh:mm)
-          const timeRegex = /^(\d{2}):(\d{2})$/;
-          const match = timeStr.match(timeRegex);
-
-          if (!match) {
-            throw new Error(
-              `Invalid time format: ${timeStr}. Use hh:mm format.`
-            );
+        // Close dialog when clicking outside of it
+        settingsDialog.addEventListener("click", (event) => {
+          if (event.target === settingsDialog) {
+            settingsDialog.close();
           }
-
-          const hours = parseInt(match[1], 10);
-          const minutes = parseInt(match[2], 10);
-
-          // Validate hours and minutes
-          if (hours < 0 || hours > 23 || minutes < 0 || minutes > 59) {
-            throw new Error(`Invalid time values in: ${timeStr}`);
-          }
-
-          return hours * 60 + minutes;
-        }
-
-        // Parse parameters with defaults
-        const parsedParams = {
-          eveningStart: timeToMinutes(
-            urlParams.get("evening_start") || DEFAULTS.evening_start
-          ),
-          morningTransitionStart: timeToMinutes(
-            urlParams.get("morning_transition_start") ||
-              DEFAULTS.morning_transition_start
-          ),
-          morningTransitionEnd: timeToMinutes(
-            urlParams.get("morning_transition_end") ||
-              DEFAULTS.morning_transition_end
-          ),
-        };
-
-        return parsedParams;
+        });
       }
 
-      function initializeInputs() {
+      function addColonMiddle(str) {
+        // If the string is empty, return it as is
+        if (str.length === 0) return str;
+
+        // Calculate the middle index
+        const middleIndex = Math.floor(str.length / 2);
+
+        // Insert the colon at the middle index
+        return str.slice(0, middleIndex) + ":" + str.slice(middleIndex);
+      }
+
+      function convertToMinutes(timeStr) {
+        const match = timeStr.match(TIME_REGEX);
+
+        if (!match) {
+          throw new Error(`Invalid time format: ${timeStr}. Use hh:mm format.`);
+        }
+
+        const hours = parseInt(match[1], 10);
+        const minutes = parseInt(match[2], 10);
+
+        return hours * 60 + minutes;
+      }
+
+      function getTimeParameters() {
         const urlParams = new URLSearchParams(window.location.search);
 
-        inputs.evening_start.value =
-          urlParams.get("evening_start") || DEFAULTS.evening_start;
-        inputs.morning_transition_start.value =
-          urlParams.get("morning_transition_start") ||
-          DEFAULTS.morning_transition_start;
-        inputs.morning_transition_end.value =
-          urlParams.get("morning_transition_end") ||
-          DEFAULTS.morning_transition_end;
-        inputs.evening_start.addEventListener("change", updateUrlParams);
-        inputs.morning_transition_start.addEventListener(
+        return {
+          eveningStart: urlParams.get("eveningStart")
+            ? validateTime(addColonMiddle(urlParams.get("eveningStart")))
+            : DEFAULTS.eveningStart,
+          morningTransitionStart: urlParams.get("morningTransitionStart")
+            ? validateTime(
+                addColonMiddle(urlParams.get("morningTransitionStart"))
+              )
+            : DEFAULTS.morningTransitionStart,
+          morningTransitionEnd: urlParams.get("morningTransitionEnd")
+            ? validateTime(
+                addColonMiddle(urlParams.get("morningTransitionEnd"))
+              )
+            : DEFAULTS.morningTransitionEnd,
+        };
+      }
+
+      function validateTime(timeStr) {
+        // Validate time format (hh:mm)
+        const match = timeStr.match(TIME_REGEX);
+
+        if (!match) {
+          throw new Error(`Invalid time format: ${timeStr}. Use hh:mm format.`);
+        }
+
+        return timeStr;
+      }
+
+      function updateClock() {
+        const now = new Date();
+        const hours = String(now.getHours()).padStart(2, "0");
+        const minutes = String(now.getMinutes()).padStart(2, "0");
+
+        document.getElementById("clock").textContent = `${hours}:${minutes}`;
+        document.body.style.backgroundColor = getBackgroundColor(now);
+      }
+
+      function getBackgroundColor(date) {
+        const hours = date.getHours();
+        const minutes = date.getMinutes();
+        const timeInMinutes = hours * 60 + minutes;
+
+        const timeParams = getTimeParameters();
+
+        if (
+          timeInMinutes >= convertToMinutes(timeParams.eveningStart) ||
+          timeInMinutes < convertToMinutes(timeParams.morningTransitionStart)
+        ) {
+          return "#FF3B30"; // Apple red
+        }
+
+        if (
+          timeInMinutes >=
+            convertToMinutes(timeParams.morningTransitionStart) &&
+          timeInMinutes < convertToMinutes(timeParams.morningTransitionEnd)
+        ) {
+          return "#FFCC00"; // Warm yellow
+        }
+
+        return "#34C759"; // Apple green
+      }
+
+      const inputs = {
+        eveningStart: document.getElementById("evening-start"),
+        morningTransitionStart: document.getElementById(
+          "morning-transition-start"
+        ),
+        morningTransitionEnd: document.getElementById("morning-transition-end"),
+      };
+
+      function initializeInputs() {
+        const timeParams = getTimeParameters();
+
+        inputs.eveningStart.value = timeParams.eveningStart;
+        inputs.morningTransitionStart.value = timeParams.morningTransitionStart;
+        inputs.morningTransitionEnd.value = timeParams.morningTransitionEnd;
+
+        inputs.eveningStart.addEventListener("change", updateUrlParams);
+        inputs.morningTransitionStart.addEventListener(
           "change",
           updateUrlParams
         );
-        inputs.morning_transition_end.addEventListener(
-          "change",
-          updateUrlParams
-        );
+        inputs.morningTransitionEnd.addEventListener("change", updateUrlParams);
       }
 
       function updateUrlParams() {
@@ -306,11 +295,16 @@
         // Update or remove parameters
         Object.keys(inputs).forEach((key) => {
           const value = inputs[key].value;
-          if (value !== DEFAULTS[key]) {
-            params.set(key, value);
-          } else {
+
+          console.log("key", key, "value", value, DEFAULTS[key]);
+
+          if (value === DEFAULTS[key]) {
             params.delete(key);
+            return;
           }
+
+          const valueToSave = value.replace(":", ""); // "convert" a string like "hh:mm" to "hhmm", so it looks nicer in the URL
+          params.set(key, valueToSave);
         });
 
         // Construct new URL
