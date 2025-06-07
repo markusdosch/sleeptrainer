@@ -234,6 +234,11 @@
         updateClock();
         setInterval(updateClock, 1000);
       });
+      
+      // update clock immediately when user navigates to page/brings it to foreground
+ document.addEventListener("visibilitychange", () => { if(document.visibilityState === "visible") {  updateClock(); }
+      
+      });
 
       // Prevent default behavior for touch events to avoid iOS safari
       // bouncing effect and unintended zooming
