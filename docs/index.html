@@ -1,371 +1,403 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-    />
-    <meta
-      name="apple-mobile-web-app-status-bar-style"
-      content="black-translucent"
-    />
-    <link rel="manifest" href="manifest.json" />
-    <title>Sleeptrainer</title>
-    <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
+	<head>
+		<meta charset="UTF-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+		/>
+		<meta
+			name="apple-mobile-web-app-status-bar-style"
+			content="black-translucent"
+		/>
+		<link rel="manifest" href="manifest.json" />
+		<title>Sleeptrainer</title>
+		<style>
+			* {
+				margin: 0;
+				padding: 0;
+				box-sizing: border-box;
+			}
 
-      body {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-          Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
-        height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        transition: background-color 1s ease;
-      }
+			body {
+				font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+					Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans",
+					"Helvetica Neue", sans-serif;
+				height: 100vh;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				transition: background-color 1s ease;
+			}
 
-      .time {
-        font-size: 18vw;
-        font-weight: 700;
-        color: white;
-        text-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      }
+			.time {
+				font-size: 18vw;
+				font-weight: 700;
+				color: white;
+				text-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+			}
 
-      /* Media queries for responsiveness */
-      @media (min-width: 768px) {
-        .time {
-          font-size: 16vw;
-        }
-      }
+			/* Media queries for responsiveness */
+			@media (min-width: 768px) {
+				.time {
+					font-size: 16vw;
+				}
+			}
 
-      @media (min-width: 1024px) {
-        .time {
-          font-size: 14vw;
-        }
-      }
+			@media (min-width: 1024px) {
+				.time {
+					font-size: 14vw;
+				}
+			}
 
-      /* iPad specific */
-      @media only screen and (min-device-width: 768px) and (max-device-width: 1024px) {
-        .time {
-          font-size: 20vw;
-        }
-      }
+			/* iPad specific */
+			@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) {
+				.time {
+					font-size: 20vw;
+				}
+			}
 
-      /* iPhone specific */
-      @media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
-        .time {
-          font-size: 24vw;
-        }
-      }
+			/* iPhone specific */
+			@media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
+				.time {
+					font-size: 24vw;
+				}
+			}
 
-      .settings-btn {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-      }
+			.settings-btn {
+				position: fixed;
+				top: 20px;
+				right: 20px;
+			}
 
-      dialog {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 300px;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        background-color: white;
-        border: none;
-      }
+			dialog {
+				position: fixed;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+				width: 300px;
+				padding: 20px;
+				border-radius: 10px;
+				box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+				background-color: white;
+				border: none;
+			}
 
-      dialog::backdrop {
-        background-color: rgba(0, 0, 0, 0.5);
-      }
+			dialog::backdrop {
+				background-color: rgba(0, 0, 0, 0.5);
+			}
 
-      dialog h2 {
-        margin-top: 0;
-        color: #333;
-      }
+			dialog h2 {
+				margin-top: 0;
+				color: #333;
+			}
 
-      .close-btn {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        background: none;
-        border: none;
-        font-size: 20px;
-        cursor: pointer;
-        color: #666;
-      }
+			.close-btn {
+				position: absolute;
+				top: 10px;
+				right: 10px;
+				background: none;
+				border: none;
+				font-size: 20px;
+				cursor: pointer;
+				color: #666;
+			}
 
-      /* via https://stackoverflow.com/a/45890842 */
-      button.stylereset,
-      input[type="submit"].stylereset,
-      input[type="reset"].stylereset {
-        background: none;
-        color: inherit;
-        border: none;
-        padding: 0;
-        font: inherit;
-        cursor: pointer;
-        outline: inherit;
-      }
+			/* via https://stackoverflow.com/a/45890842 */
+			button.stylereset,
+			input[type="submit"].stylereset,
+			input[type="reset"].stylereset {
+				background: none;
+				color: inherit;
+				border: none;
+				padding: 0;
+				font: inherit;
+				cursor: pointer;
+				outline: inherit;
+			}
 
-      .time-input-group {
-        display: flex;
-        flex-direction: column;
-        margin-bottom: 1rem;
-      }
-      label {
-        margin-bottom: 0.5rem;
-        font-weight: bold;
-      }
-      input[type="time"] {
-        padding: 0.5rem;
-        font-size: 1rem;
-      }
+			.time-input-group {
+				display: flex;
+				flex-direction: column;
+				margin-bottom: 1rem;
+			}
+			label {
+				margin-bottom: 0.5rem;
+				font-weight: bold;
+			}
+			input[type="time"] {
+				padding: 0.5rem;
+				font-size: 1rem;
+			}
 
-      .reset-btn {
-        display: inline-block;
-        outline: 0;
-        cursor: pointer;
-        border-radius: 8px;
-        box-shadow: 0 2px 5px 0 rgb(213 217 217 / 50%);
-        background: #fff;
-        border: 1px solid #d5d9d9;
-        font-size: 13px;
-        height: 31px;
-        padding: 0 11px;
-        text-align: center;
-        font-weight: 400;
-        color: #0f1111;
-        :hover {
-          background-color: #f7fafa;
-          border-color: #d5d9d9;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <div class="time" id="clock">XX:XX</div>
+			.reset-btn {
+				display: inline-block;
+				outline: 0;
+				cursor: pointer;
+				border-radius: 8px;
+				box-shadow: 0 2px 5px 0 rgb(213 217 217 / 50%);
+				background: #fff;
+				border: 1px solid #d5d9d9;
+				font-size: 13px;
+				height: 31px;
+				padding: 0 11px;
+				text-align: center;
+				font-weight: 400;
+				color: #0f1111;
+				:hover {
+					background-color: #f7fafa;
+					border-color: #d5d9d9;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<div class="time" id="clock">XX:XX</div>
 
-    <button class="settings-btn stylereset" aria-label="Open Settings">
-      ⚙️
-    </button>
+		<button class="settings-btn stylereset" aria-label="Open Settings">
+			⚙️
+		</button>
 
-    <dialog id="settingsDialog">
-      <button class="close-btn stylereset" aria-label="Close">&times;</button>
-      <h2 style="margin-bottom: 0.5rem">Settings</h2>
-      <div>
-        <div class="time-input-group">
-          <label for="evening-start">Evening Start Time</label>
-          <input type="time" id="evening-start" />
-        </div>
+		<dialog id="settingsDialog">
+			<button class="close-btn stylereset" aria-label="Close">
+				&times;
+			</button>
+			<h2 style="margin-bottom: 0.5rem">Settings</h2>
+			<div>
+				<div class="time-input-group">
+					<label for="evening-start">Evening Start Time</label>
+					<input type="time" id="evening-start" />
+				</div>
 
-        <div class="time-input-group">
-          <label for="morning-transition-start">Morning Transition Start</label>
-          <input type="time" id="morning-transition-start" />
-        </div>
+				<div class="time-input-group">
+					<label for="morning-transition-start"
+						>Morning Transition Start</label
+					>
+					<input type="time" id="morning-transition-start" />
+				</div>
 
-        <div class="time-input-group">
-          <label for="morning-transition-end">Morning Transition End</label>
-          <input type="time" id="morning-transition-end" />
-        </div>
+				<div class="time-input-group">
+					<label for="morning-transition-end"
+						>Morning Transition End</label
+					>
+					<input type="time" id="morning-transition-end" />
+				</div>
 
-        <div style="margin-bottom: 1rem">
-          <button type="button" class="reset-btn">Reset to defaults</button>
-        </div>
+				<div style="margin-bottom: 1rem">
+					<button type="button" class="reset-btn">
+						Reset to defaults
+					</button>
+				</div>
 
-        <div style="margin-bottom: 1rem">
-          <strong>Pro-tip:</strong> Add <em>Sleeptimer</em> to your homescreen!
-          See e.g. this
-          <a
-            href="https://www.androidauthority.com/add-website-android-iphone-home-screen-3181682/"
-            >guide</a
-          >.
-        </div>
+				<div style="margin-bottom: 1rem">
+					<strong>Pro-tip:</strong> Add <em>Sleeptimer</em> to your
+					homescreen! See e.g. this
+					<a
+						href="https://www.androidauthority.com/add-website-android-iphone-home-screen-3181682/"
+						>guide</a
+					>.
+				</div>
 
-        <div style="display: flex; justify-content: center; width: 100%">
-          <a
-            href="https://github.com/markusdosch/sleeptrainer"
-            style="display: block; width: 25px"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-              <path
-                fill-rule="evenodd"
-                clip-rule="evenodd"
-                d="M48.854 0C21.839 0 0 22 0 49.217c0 21.756 13.993 40.172 33.405 46.69 2.427.49 3.316-1.059 3.316-2.362 0-1.141-.08-5.052-.08-9.127-13.59 2.934-16.42-5.867-16.42-5.867-2.184-5.704-5.42-7.17-5.42-7.17-4.448-3.015.324-3.015.324-3.015 4.934.326 7.523 5.052 7.523 5.052 4.367 7.496 11.404 5.378 14.235 4.074.404-3.178 1.699-5.378 3.074-6.6-10.839-1.141-22.243-5.378-22.243-24.283 0-5.378 1.94-9.778 5.014-13.2-.485-1.222-2.184-6.275.486-13.038 0 0 4.125-1.304 13.426 5.052a46.97 46.97 0 0 1 12.214-1.63c4.125 0 8.33.571 12.213 1.63 9.302-6.356 13.427-5.052 13.427-5.052 2.67 6.763.97 11.816.485 13.038 3.155 3.422 5.015 7.822 5.015 13.2 0 18.905-11.404 23.06-22.324 24.283 1.78 1.548 3.316 4.481 3.316 9.126 0 6.6-.08 11.897-.08 13.526 0 1.304.89 2.853 3.316 2.364 19.412-6.52 33.405-24.935 33.405-46.691C97.707 22 75.788 0 48.854 0z"
-                fill="#24292f"
-              />
-            </svg>
-          </a>
-        </div>
-      </div>
-    </dialog>
+				<div
+					style="display: flex; justify-content: center; width: 100%"
+				>
+					<a
+						href="https://github.com/markusdosch/sleeptrainer"
+						style="display: block; width: 25px"
+					>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							viewBox="0 0 100 100"
+						>
+							<path
+								fill-rule="evenodd"
+								clip-rule="evenodd"
+								d="M48.854 0C21.839 0 0 22 0 49.217c0 21.756 13.993 40.172 33.405 46.69 2.427.49 3.316-1.059 3.316-2.362 0-1.141-.08-5.052-.08-9.127-13.59 2.934-16.42-5.867-16.42-5.867-2.184-5.704-5.42-7.17-5.42-7.17-4.448-3.015.324-3.015.324-3.015 4.934.326 7.523 5.052 7.523 5.052 4.367 7.496 11.404 5.378 14.235 4.074.404-3.178 1.699-5.378 3.074-6.6-10.839-1.141-22.243-5.378-22.243-24.283 0-5.378 1.94-9.778 5.014-13.2-.485-1.222-2.184-6.275.486-13.038 0 0 4.125-1.304 13.426 5.052a46.97 46.97 0 0 1 12.214-1.63c4.125 0 8.33.571 12.213 1.63 9.302-6.356 13.427-5.052 13.427-5.052 2.67 6.763.97 11.816.485 13.038 3.155 3.422 5.015 7.822 5.015 13.2 0 18.905-11.404 23.06-22.324 24.283 1.78 1.548 3.316 4.481 3.316 9.126 0 6.6-.08 11.897-.08 13.526 0 1.304.89 2.853 3.316 2.364 19.412-6.52 33.405-24.935 33.405-46.691C97.707 22 75.788 0 48.854 0z"
+								fill="#24292f"
+							/>
+						</svg>
+					</a>
+				</div>
+			</div>
+		</dialog>
 
-    <script>
-      const DEFAULTS = {
-        eveningStart: "19:00",
-        morningTransitionStart: "05:30",
-        morningTransitionEnd: "06:00",
-      };
-      const TIME_REGEX = /^(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9])$/;
+		<script>
+			const DEFAULTS = {
+				eveningStart: "19:00",
+				morningTransitionStart: "05:30",
+				morningTransitionEnd: "06:00",
+			};
+			const TIME_REGEX = /^(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9])$/;
 
-      function getTimeParameters() {
-        return {
-          eveningStart:
-            localStorage.getItem("eveningStart") || DEFAULTS.eveningStart,
-          morningTransitionStart:
-            localStorage.getItem("morningTransitionStart") ||
-            DEFAULTS.morningTransitionStart,
-          morningTransitionEnd:
-            localStorage.getItem("morningTransitionEnd") ||
-            DEFAULTS.morningTransitionEnd,
-        };
-      }
+			function getTimeParameters() {
+				return {
+					eveningStart:
+						localStorage.getItem("eveningStart") ||
+						DEFAULTS.eveningStart,
+					morningTransitionStart:
+						localStorage.getItem("morningTransitionStart") ||
+						DEFAULTS.morningTransitionStart,
+					morningTransitionEnd:
+						localStorage.getItem("morningTransitionEnd") ||
+						DEFAULTS.morningTransitionEnd,
+				};
+			}
 
-      document.addEventListener("DOMContentLoaded", function () {
-        initializeSettingsDialog();
+			document.addEventListener("DOMContentLoaded", function () {
+				initializeSettingsDialog();
 
-        updateClock();
-        setInterval(updateClock, 1000);
-      });
-      
-      // update clock immediately when user navigates to page/brings it to foreground
- document.addEventListener("visibilitychange", () => { if(document.visibilityState === "visible") {  updateClock(); }
-      
-      });
+				updateClock();
+				setInterval(updateClock, 1000);
+			});
 
-      // Prevent default behavior for touch events to avoid iOS safari
-      // bouncing effect and unintended zooming
-      document.addEventListener(
-        "touchmove",
-        function (event) {
-          event.preventDefault();
-        },
-        { passive: false }
-      );
+			// update clock immediately when user navigates to page/brings it to foreground
+			document.addEventListener("visibilitychange", () => {
+				if (document.visibilityState === "visible") {
+					updateClock();
+				}
+			});
 
-      function initializeSettingsDialog() {
-        initializeInputs();
+			// Prevent default behavior for touch events to avoid iOS safari
+			// bouncing effect and unintended zooming
+			document.addEventListener(
+				"touchmove",
+				function (event) {
+					event.preventDefault();
+				},
+				{ passive: false }
+			);
 
-        const settingsDialog = document.getElementById("settingsDialog");
+			function initializeSettingsDialog() {
+				initializeInputs();
 
-        // Open dialog when settings button is clicked
-        document
-          .querySelector(".settings-btn")
-          .addEventListener("click", () => {
-            settingsDialog.showModal();
-          });
+				const settingsDialog =
+					document.getElementById("settingsDialog");
 
-        // Close dialog when close button is clicked
-        settingsDialog
-          .querySelector(".close-btn")
-          .addEventListener("click", () => {
-            settingsDialog.close();
-          });
+				// Open dialog when settings button is clicked
+				document
+					.querySelector(".settings-btn")
+					.addEventListener("click", () => {
+						settingsDialog.showModal();
+					});
 
-        // Close dialog when clicking outside of it
-        settingsDialog.addEventListener("click", (event) => {
-          if (event.target === settingsDialog) {
-            settingsDialog.close();
-          }
-        });
+				// Close dialog when close button is clicked
+				settingsDialog
+					.querySelector(".close-btn")
+					.addEventListener("click", () => {
+						settingsDialog.close();
+					});
 
-        document
-          .querySelector(".reset-btn")
-          .addEventListener("click", resetState);
-      }
+				// Close dialog when clicking outside of it
+				settingsDialog.addEventListener("click", (event) => {
+					if (event.target === settingsDialog) {
+						settingsDialog.close();
+					}
+				});
 
-      function convertToMinutes(timeStr) {
-        const match = timeStr.match(TIME_REGEX);
+				document
+					.querySelector(".reset-btn")
+					.addEventListener("click", resetState);
+			}
 
-        if (!match) {
-          throw new Error(`Invalid time format: ${timeStr}. Use hh:mm format.`);
-        }
+			function convertToMinutes(timeStr) {
+				const match = timeStr.match(TIME_REGEX);
 
-        const hours = parseInt(match[1], 10);
-        const minutes = parseInt(match[2], 10);
+				if (!match) {
+					throw new Error(
+						`Invalid time format: ${timeStr}. Use hh:mm format.`
+					);
+				}
 
-        return hours * 60 + minutes;
-      }
+				const hours = parseInt(match[1], 10);
+				const minutes = parseInt(match[2], 10);
 
-      function updateClock() {
-        const now = new Date();
-        const hours = String(now.getHours()).padStart(2, "0");
-        const minutes = String(now.getMinutes()).padStart(2, "0");
+				return hours * 60 + minutes;
+			}
 
-        document.getElementById("clock").textContent = `${hours}:${minutes}`;
-        document.body.style.backgroundColor = getBackgroundColor(now);
-      }
+			function updateClock() {
+				const now = new Date();
+				const hours = String(now.getHours()).padStart(2, "0");
+				const minutes = String(now.getMinutes()).padStart(2, "0");
 
-      function getBackgroundColor(date) {
-        const hours = date.getHours();
-        const minutes = date.getMinutes();
-        const timeInMinutes = hours * 60 + minutes;
+				document.getElementById(
+					"clock"
+				).textContent = `${hours}:${minutes}`;
+				document.body.style.backgroundColor = getBackgroundColor(now);
+			}
 
-        const timeParams = getTimeParameters();
+			function getBackgroundColor(date) {
+				const hours = date.getHours();
+				const minutes = date.getMinutes();
+				const timeInMinutes = hours * 60 + minutes;
 
-        if (
-          timeInMinutes >= convertToMinutes(timeParams.eveningStart) ||
-          timeInMinutes < convertToMinutes(timeParams.morningTransitionStart)
-        ) {
-          return "#FF3B30"; // Apple red
-        }
+				const timeParams = getTimeParameters();
 
-        if (
-          timeInMinutes >=
-            convertToMinutes(timeParams.morningTransitionStart) &&
-          timeInMinutes < convertToMinutes(timeParams.morningTransitionEnd)
-        ) {
-          return "#FFCC00"; // Warm yellow
-        }
+				if (
+					timeInMinutes >=
+						convertToMinutes(timeParams.eveningStart) ||
+					timeInMinutes <
+						convertToMinutes(timeParams.morningTransitionStart)
+				) {
+					return "#FF3B30"; // Apple red
+				}
 
-        return "#34C759"; // Apple green
-      }
+				if (
+					timeInMinutes >=
+						convertToMinutes(timeParams.morningTransitionStart) &&
+					timeInMinutes <
+						convertToMinutes(timeParams.morningTransitionEnd)
+				) {
+					return "#FFCC00"; // Warm yellow
+				}
 
-      const inputs = {
-        eveningStart: document.getElementById("evening-start"),
-        morningTransitionStart: document.getElementById(
-          "morning-transition-start"
-        ),
-        morningTransitionEnd: document.getElementById("morning-transition-end"),
-      };
+				return "#34C759"; // Apple green
+			}
 
-      function initializeInputs() {
-        const timeParams = getTimeParameters();
+			const inputs = {
+				eveningStart: document.getElementById("evening-start"),
+				morningTransitionStart: document.getElementById(
+					"morning-transition-start"
+				),
+				morningTransitionEnd: document.getElementById(
+					"morning-transition-end"
+				),
+			};
 
-        inputs.eveningStart.value = timeParams.eveningStart;
-        inputs.morningTransitionStart.value = timeParams.morningTransitionStart;
-        inputs.morningTransitionEnd.value = timeParams.morningTransitionEnd;
+			function initializeInputs() {
+				const timeParams = getTimeParameters();
 
-        inputs.eveningStart.addEventListener("change", updateLocalStorage);
-        inputs.morningTransitionStart.addEventListener(
-          "change",
-          updateLocalStorage
-        );
-        inputs.morningTransitionEnd.addEventListener(
-          "change",
-          updateLocalStorage
-        );
-      }
+				inputs.eveningStart.value = timeParams.eveningStart;
+				inputs.morningTransitionStart.value =
+					timeParams.morningTransitionStart;
+				inputs.morningTransitionEnd.value =
+					timeParams.morningTransitionEnd;
 
-      function updateLocalStorage() {
-        // Update parameters
-        Object.keys(inputs).forEach((key) => {
-          const value = inputs[key].value;
-          localStorage.setItem(key, value);
-        });
-      }
+				inputs.eveningStart.addEventListener(
+					"change",
+					updateLocalStorage
+				);
+				inputs.morningTransitionStart.addEventListener(
+					"change",
+					updateLocalStorage
+				);
+				inputs.morningTransitionEnd.addEventListener(
+					"change",
+					updateLocalStorage
+				);
+			}
 
-      function resetState() {
-        localStorage.clear();
-        initializeInputs();
-      }
-    </script>
-  </body>
+			function updateLocalStorage() {
+				// Update parameters
+				Object.keys(inputs).forEach((key) => {
+					const value = inputs[key].value;
+					localStorage.setItem(key, value);
+				});
+			}
+
+			function resetState() {
+				localStorage.clear();
+				initializeInputs();
+			}
+		</script>
+	</body>
 </html>
