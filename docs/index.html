@@ -83,6 +83,17 @@
         right: 20px;
       }
 
+      .wakelock-btn {
+        position: fixed;
+        top: 20px;
+        right: 60px;
+      }
+
+      .emoji-grayscale {
+        filter: grayscale(100%);
+        -webkit-filter: grayscale(100%);
+      }
+
       dialog {
         position: fixed;
         top: 50%;
@@ -166,6 +177,13 @@
   </head>
   <body>
     <div class="time" id="clock">XX:XX</div>
+
+    <button
+      class="wakelock-btn stylereset emoji-grayscale"
+      aria-label="Turn screen wake lock on"
+    >
+      🔆
+    </button>
 
     <button class="settings-btn stylereset" aria-label="Open Settings">
       ⚙️
@@ -390,11 +408,17 @@
           if ("wakeLock" in navigator) {
             await navigator.wakeLock.request("screen");
             console.log("Wake lock activated");
+            document
+              .querySelector(".wakelock-btn")
+              .classList.remove("emoji-grayscale");
+            return true;
           } else {
             console.warn("Wake Lock API not supported");
+            return false;
           }
         } catch (err) {
           console.error("Failed to request wake lock:", err);
+          return false;
         }
       }
 
@@ -410,11 +434,19 @@
 
       // Safari quirk: Directly acquiring wake lock on "DOMContentLoaded" doesn't work,
       // because user needs to interact with the page first, see https://stackoverflow.com/a/78705636
-      document.addEventListener("click", async () => {
-        if (document.visibilityState === "visible") {
-          await requestWakeLock();
-        }
-      });
+      document
+        .querySelector(".wakelock-btn")
+        .addEventListener("click", async () => {
+          if (document.visibilityState === "visible") {
+            const success = await requestWakeLock();
+
+            if (success) {
+              // TODO: Show toast
+            } else {
+              // TODO: Show toast
+            }
+          }
+        });
     </script>
     <script>
       if ("serviceWorker" in navigator) {
