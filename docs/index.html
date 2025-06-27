@@ -384,6 +384,31 @@
       }
     </script>
     <script>
+      async function requestWakeLock() {
+        try {
+          // Check if wake lock is supported
+          if ("wakeLock" in navigator) {
+            await navigator.wakeLock.request("screen");
+            console.log("Wake lock activated");
+          } else {
+            console.warn("Wake Lock API not supported");
+          }
+        } catch (err) {
+          console.error("Failed to request wake lock:", err);
+        }
+      }
+
+      // Handle visibility change to re-request wake lock when page becomes visible
+      document.addEventListener("visibilitychange", async () => {
+        if (document.visibilityState === "visible") {
+          await requestWakeLock();
+        }
+      });
+
+      // Initialize wake lock when page loads
+      document.addEventListener("DOMContentLoaded", requestWakeLock);
+    </script>
+    <script>
       if ("serviceWorker" in navigator) {
         navigator.serviceWorker.register("/sw.js");
       }
