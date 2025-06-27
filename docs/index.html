@@ -407,6 +407,14 @@
 
       // Initialize wake lock when page loads
       document.addEventListener("DOMContentLoaded", requestWakeLock);
+
+      // Safari quirk: Directly acquiring wake lock on "DOMContentLoaded" doesn't work,
+      // because user needs to interact with the page first, see https://stackoverflow.com/a/78705636
+      document.addEventListener("click", async () => {
+        if (document.visibilityState === "visible") {
+          await requestWakeLock();
+        }
+      });
     </script>
     <script>
       if ("serviceWorker" in navigator) {
