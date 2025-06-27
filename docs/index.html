@@ -173,6 +173,57 @@
           border-color: #d5d9d9;
         }
       }
+
+      /* Toast Styles */
+      .toast {
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 12px 24px;
+        border-radius: 6px;
+        font-size: 14px;
+        z-index: 1000;
+        opacity: 0;
+        transition: opacity 0.3s ease-in-out;
+        max-width: 90%;
+        text-align: center;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .toast.show {
+        opacity: 1;
+      }
+
+      .toast-message {
+        flex: 1;
+      }
+
+      .toast-close {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+        padding: 0;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        transition: background-color 0.2s;
+        flex-shrink: 0;
+      }
+
+      .toast-close:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+      }
     </style>
   </head>
   <body>
@@ -441,12 +492,70 @@
             const success = await requestWakeLock();
 
             if (success) {
-              // TODO: Show toast
+              showToast("Screen will stay on.");
             } else {
-              // TODO: Show toast
+              showToast(
+                "Screen wake lock activation failed. Please disable 'screen should turn off after X seconds' in your system settings manually."
+              );
             }
           }
         });
+    </script>
+    <script>
+      function showToast(text) {
+        // Remove any existing toast
+        const existingToast = document.querySelector(".toast");
+        if (existingToast) {
+          existingToast.remove();
+        }
+
+        // Create new toast element
+        const toast = document.createElement("div");
+        toast.className = "toast";
+
+        // Create message container
+        const messageDiv = document.createElement("div");
+        messageDiv.className = "toast-message";
+        messageDiv.textContent = text;
+
+        // Create close button
+        const closeButton = document.createElement("button");
+        closeButton.className = "toast-close";
+        closeButton.innerHTML = "×";
+        closeButton.setAttribute("aria-label", "Close notification");
+
+        // Add close functionality
+        const closeToast = () => {
+          toast.classList.remove("show");
+          setTimeout(() => {
+            if (toast.parentNode) {
+              toast.parentNode.removeChild(toast);
+            }
+          }, 300);
+        };
+
+        closeButton.addEventListener("click", closeToast);
+
+        // Assemble toast
+        toast.appendChild(messageDiv);
+        toast.appendChild(closeButton);
+
+        // Add toast to the page
+        document.body.appendChild(toast);
+
+        // Trigger show animation
+        setTimeout(() => {
+          toast.classList.add("show");
+        }, 10);
+
+        // Remove toast after 10 seconds
+        const autoCloseTimer = setTimeout(closeToast, 10000);
+
+        // Clear timer if manually closed
+        closeButton.addEventListener("click", () => {
+          clearTimeout(autoCloseTimer);
+        });
+      }
     </script>
     <script>
       if ("serviceWorker" in navigator) {
